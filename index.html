@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super Macumbakart - Terreiro Boiadeiro Querêncio</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+        body {
+            background-color: #080d1a;
+            color: #f3f4f6;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+            background: #111827;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 2px solid #d4af37;
+            width: 100%;
+            max-width: 380px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #d4af37;
+            object-fit: cover;
+        }
+        h1 { color: #d4af37; margin: 0; font-size: 0.85rem; text-transform: uppercase; }
+        p.subtitle { color: #10b981; font-size: 0.62rem; margin: 2px 0 0 0; font-weight: bold; }
+
+        .btn-audio {
+            background: #1f2937;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .game-panel {
+            background: #111827;
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            padding: 10px;
+            max-width: 380px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+            position: relative;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 8px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            color: #d4af37;
+            background: #1f2937;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            width: 340px;
+            height: 360px;
+        }
+
+        canvas {
+            border: 2px solid #374151;
+            background: #8b7355;
+            border-radius: 6px;
+            display: block;
+        }
+
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            max-width: 340px;
+            margin-top: 10px;
+        }
+        .controls-row {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+        }
+        .ctrl-btn {
+            background: #1f2937;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 12px 0;
+            flex: 1;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-gas {
+            background: #10b981;
+            border-color: #34d399;
+            color: #080d1a;
+            font-weight: bold;
+            flex: 1.2;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .btn-reverse {
+            background: #ef4444;
+            border-color: #f87171;
+            color: #fff;
+            font-weight: bold;
+            flex: 1;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .btn-turbo {
+            background: #f59e0b;
+            border-color: #fbbf24;
+            color: #080d1a;
+            font-weight: bold;
+            padding: 10px 0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+        }
+        .ctrl-btn:active, .btn-gas:active, .btn-reverse:active, .btn-turbo:active {
+            transform: scale(0.96);
+        }
+
+        .btn-action {
+            background: #10b981;
+            color: #0b131f;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            width: 100%;
+            margin: 8px 0;
+            max-height: 190px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .entity-option {
+            background: #1f2937;
+            border: 2px solid #374151;
+            border-radius: 8px;
+            padding: 6px;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .entity-option img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #d4af37;
+            flex-shrink: 0;
+        }
+        .entity-option span {
+            font-size: 0.72rem;
+            font-weight: bold;
+            color: #f3f4f6;
+            text-align: left;
+        }
+        .entity-option.selected {
+            border-color: #d4af37;
+            background: #2b374a;
+        }
+
+        .track-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            width: 100%;
+            margin: 8px 0;
+        }
+        .track-option {
+            background: #1f2937;
+            border: 2px solid #374151;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+        }
+        .track-option.selected {
+            border-color: #d4af37;
+            background: #2b374a;
+        }
+        .track-option h3 { color: #d4af37; margin: 0 0 4px 0; font-size: 0.85rem; }
+        .track-option p { color: #9ca3af; margin: 0; font-size: 0.68rem; }
+
+        .overlay-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 13, 26, 0.97);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            text-align: center;
+            padding: 16px;
+            border-radius: 12px;
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <div class="header-left">
+            <img src="https://i.ibb.co/60wpJ3xG/Logo-terreiro.jpg" class="header-logo" alt="Logo">
+            <div>
+                <h1>Super Macumbakart</h1>
+                </div>
+        </div>
+        <button class="btn-audio" id="audioToggleBtn" onclick="toggleAudio()">🔊 Som</button>
+    </div>
+
+    <div class="game-panel">
+        
+        <!-- SELEÇÃO DE ENTIDADE -->
+        <div id="startScreen" class="overlay-screen">
+            <h2 style="color: #d4af37; margin: 0; font-size: 0.95rem;">Escolha sua Entidade</h2>
+            <p style="font-size: 0.68rem; color: #9ca3af; margin: 4px 0 8px 0;">Selecione seu piloto para a grande disputa!</p>
+            
+            <div class="entity-grid" id="entityGrid"></div>
+
+            <button class="btn-action" onclick="goToTrackSelect()">Escolher Pista ➔</button>
+        </div>
+
+        <!-- SELEÇÃO DE PISTA -->
+        <div id="trackScreen" class="overlay-screen hidden">
+            <h2 style="color: #d4af37; margin: 0; font-size: 0.95rem;">Escolha a Dificuldade</h2>
+            <p style="font-size: 0.68rem; color: #9ca3af; margin: 4px 0 8px 0;">Selecione a pista ideal:</p>
+            
+            <div class="track-grid">
+                <div class="track-option selected" id="trackOpt0" onclick="selectTrack(0)">
+                    <h3>🟢 Fácil: Circuito Oval</h3>
+                    <p>Pista oval bem larga e com curvas longas.</p>
+                </div>
+                <div class="track-option" id="trackOpt1" onclick="selectTrack(1)">
+                    <h3>🟡 Intermediário: Circuito com Retas e Curvas</h3>
+                    <p>Pista com retas e curvas moderadas.</p>
+                </div>
+                <div class="track-option" id="trackOpt2" onclick="selectTrack(2)">
+                    <h3>🔴 Difícil: Circuito com Obstáculos</h3>
+                    <p>Pista com obstáculos e rampas de turbo.</p>
+                </div>
+            </div>
+
+            <button class="btn-action" onclick="initGame()">Largar na Pista 🏎️</button>
+        </div>
+
+        <!-- PÓDIO / TELA FINAL -->
+        <div id="gameOverScreen" class="overlay-screen hidden">
+            <h2 id="podiumTitle" style="margin: 0; font-size: 1.2rem;">Pódio do Terreiro 🏆</h2>
+            <p id="podiumText" style="font-size: 0.82rem; color: #f3f4f6; margin: 12px 0; line-height: 1.4;"></p>
+            <button class="btn-action" onclick="resetToMenu()">Jogar Novamente</button>
+        </div>
+
+        <div class="stats-bar">
+            <span>Piloto: <strong id="currentEntityName" style="color:#10b981;">-</strong></span>
+            <span>Volta: <strong id="lapText" style="color:#a855f7;">0/5</strong></span>
+            <span>Posição: <strong id="posText" style="color:#fff;">1º / 5</strong></span>
+        </div>
+
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="340" height="360"></canvas>
+        </div>
+
+        <!-- CONTROLES -->
+        <div class="controls-panel">
+            <div class="controls-row">
+                <button class="ctrl-btn" ontouchstart="setKey('left', true)" ontouchend="setKey('left', false)" onmousedown="setKey('left', true)" onmouseup="setKey('left', false)">◄</button>
+                <button class="ctrl-btn" ontouchstart="setKey('right', true)" ontouchend="setKey('right', false)" onmousedown="setKey('right', true)" onmouseup="setKey('right', false)">►</button>
+                <button class="btn-gas" ontouchstart="setKey('gas', true)" ontouchend="setKey('gas', false)" onmousedown="setKey('gas', true)" onmouseup="setKey('gas', false)">🟢 Acelerar</button>
+                <button class="btn-reverse" ontouchstart="setKey('reverse', true)" ontouchend="setKey('reverse', false)" onmousedown="setKey('reverse', true)" onmouseup="setKey('reverse', false)">◀️ Ré</button>
+            </div>
+            <button class="btn-turbo" ontouchstart="setKey('turbo', true)" ontouchend="setKey('turbo', false)" onmousedown="setKey('turbo', true)" onmouseup="setKey('turbo', false)">⚡ Turbo de Ervas</button>
+        </div>
+    </div>
+
+    <script>
+        const entitiesList = [
+            { name: "Baianas", img: "https://i.ibb.co/whgzzmyQ/baianas.jpg" },
+            { name: "Baianos", img: "https://i.ibb.co/FbKVVDNH/baianos.jpg" },
+            { name: "Boiadeira", img: "https://i.ibb.co/HfY97m1Q/boiadeira.jpg" },
+            { name: "Boiadeiro", img: "https://i.ibb.co/5gLgyczK/boiadeiro.jpg" },
+            { name: "Cabocla", img: "https://i.ibb.co/qYtp3mh7/cabloca.jpg" },
+            { name: "Caboclo", img: "https://i.ibb.co/6RdKhHD0/caboclo.jpg" },
+            { name: "Cangaceira", img: "https://i.ibb.co/dsW4Tqq6/cangaceira.jpg" },
+            { name: "Cangaceiro", img: "https://i.ibb.co/zHPmRYV5/cangaceiro.jpg" },
+            { name: "Cigana", img: "https://i.ibb.co/Sw3KpbGY/cigana.jpg" },
+            { name: "Cigano", img: "https://i.ibb.co/6RdGXtz2/cigano.png" },
+            { name: "Curumim", img: "https://i.ibb.co/XfLKzfQd/curumim.jpg" },
+            { name: "Erê Menina", img: "https://i.ibb.co/1DK8P50/menina.jpg" },
+            { name: "Erê Menino", img: "https://i.ibb.co/JjMSgpVS/menino.jpg" },
+            { name: "Exu", img: "https://i.ibb.co/JfqpCFL/exu.jpg" },
+            { name: "Exu Mirim", img: "https://i.ibb.co/zTRw2nx4/exu-mirim.jpg" },
+            { name: "Maria Navalha", img: "https://i.ibb.co/nMd6MMHZ/malandra.jpg" },
+            { name: "Marinheiros", img: "https://i.ibb.co/Xxz6w90k/marinheiro.png" },
+            { name: "Oriente", img: "https://i.ibb.co/FLgvpKB3/oriente.jpg" },
+            { name: "Piratas", img: "https://i.ibb.co/fzqdSF1G/pirata.png" },
+            { name: "Pombo Gira", img: "https://i.ibb.co/LXzgCM58/pombo-gira.jpg" },
+            { name: "Preta Velha", img: "https://i.ibb.co/sd9BPvWv/preta-velha.jpg" },
+            { name: "Preto Velho", img: "https://i.ibb.co/k6GfJWrY/preto-velho.jpg" },
+            { name: "Zé Pilintra", img: "https://i.ibb.co/chHZZYW1/ze-pilintra.jpg" }
+        ];
+
+        let selectedIndex = 0;
+        let selectedTrackIndex = 0;
+        const loadedImages = {};
+
+        function renderEntityGrid() {
+            const grid = document.getElementById('entityGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            entitiesList.forEach((ent, index) => {
+                const div = document.createElement('div');
+                div.className = `entity-option ${index === selectedIndex ? 'selected' : ''}`;
+                div.innerHTML = `<img src="${ent.img}" alt="${ent.name}"><span>${ent.name}</span>`;
+                div.onclick = () => {
+                    document.querySelectorAll('.entity-option').forEach(el => el.classList.remove('selected'));
+                    div.classList.add('selected');
+                    selectedIndex = index;
+                };
+                grid.appendChild(div);
+            });
+        }
+
+        function preloadImages() {
+            entitiesList.forEach((ent, idx) => {
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.src = ent.img;
+                loadedImages[idx] = img;
+            });
+        }
+
+        function goToTrackSelect() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('trackScreen').classList.remove('hidden');
+        }
+
+        function selectTrack(idx) {
+            selectedTrackIndex = idx;
+            document.getElementById('trackOpt0').classList.toggle('selected', idx === 0);
+            document.getElementById('trackOpt1').classList.toggle('selected', idx === 1);
+            document.getElementById('trackOpt2').classList.toggle('selected', idx === 2);
+        }
+
+        let audioCtx = null;
+        let audioMuted = false;
+        let bgMusicTimer = null;
+        let musicNoteIndex = 0;
+
+        const bgMelody = [
+            261.63, 329.63, 392.00, 523.25, 392.00, 329.63,
+            293.66, 349.23, 440.00, 587.33, 440.00, 349.23,
+            329.63, 392.00, 493.88, 659.25, 493.88, 392.00
+        ];
+
+        function initAudio() { 
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        
+        function toggleAudio() {
+            audioMuted = !audioMuted;
+            document.getElementById('audioToggleBtn').innerHTML = audioMuted ? '🔇 Mudo' : '🔊 Som';
+            if (audioMuted && bgMusicTimer) {
+                clearInterval(bgMusicTimer);
+                bgMusicTimer = null;
+            } else if (!audioMuted && gameActive) {
+                startBgMusic();
+            }
+        }
+
+        function startBgMusic() {
+            if (bgMusicTimer || audioMuted) return;
+            bgMusicTimer = setInterval(() => {
+                if (!audioCtx || audioMuted || !gameActive || countdownState !== 'RUNNING') return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(bgMelody[musicNoteIndex], now);
+                gain.gain.setValueAtTime(0.04, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.12);
+
+                musicNoteIndex = (musicNoteIndex + 1) % bgMelody.length;
+            }, 140);
+        }
+
+        function stopBgMusic() {
+            if (bgMusicTimer) {
+                clearInterval(bgMusicTimer);
+                bgMusicTimer = null;
+            }
+        }
+
+        let lastHitSoundTime = 0;
+        function playSound(type) {
+            if (audioMuted || !audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            if (type === 'hit') {
+                if (now - lastHitSoundTime < 0.15) return; 
+                lastHitSoundTime = now;
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(140, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.08);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } catch (e) {}
+                return;
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); 
+            gain.connect(audioCtx.destination);
+
+            if (type === 'beep') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            } else if (type === 'go') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, now);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            } else if (type === 'boost') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.3);
+                gain.gain.setValueAtTime(0.2, now); 
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); 
+                osc.stop(now + 0.3);
+            } else if (type === 'lap') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                gain.gain.setValueAtTime(0.25, now); 
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); 
+                osc.stop(now + 0.3);
+            } else if (type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.setValueAtTime(554.37, now + 0.15);
+                osc.frequency.setValueAtTime(659.25, now + 0.3);
+                osc.frequency.setValueAtTime(880, now + 0.45);
+                gain.gain.setValueAtTime(0.3, now); 
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.8);
+                osc.start(now); 
+                osc.stop(now + 0.8);
+            }
+        }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const tracks = [
+            // Pista 0: FÁCIL
+            {
+                path: [
+                    { x: 700, y: 1000 }, { x: 700, y: 300 },
+                    { x: 550, y: 150 }, { x: 250, y: 150 },
+                    { x: 100, y: 300 }, { x: 100, y: 1000 },
+                    { x: 250, y: 1150 }, { x: 550, y: 1150 }
+                ]
+            },
+            // Pista 1: INTERMEDIÁRIO
+            {
+                path: [
+                    { x: 750, y: 1100 }, { x: 750, y: 300 },
+                    { x: 650, y: 180 }, { x: 250, y: 450 },
+                    { x: 150, y: 550 }, { x: 150, y: 950 },
+                    { x: 250, y: 1050 }, { x: 500, y: 750 },
+                    { x: 600, y: 950 }, { x: 700, y: 1250 }
+                ]
+            },
+            // Pista 2: DIFÍCIL
+            {
+                path: [
+                    { x: 750, y: 1150 }, { x: 750, y: 250 },
+                    { x: 550, y: 120 }, { x: 200, y: 350 },
+                    { x: 120, y: 650 }, { x: 350, y: 850 },
+                    { x: 150, y: 1100 }, { x: 450, y: 1250 }
+                ]
+            }
+        ];
+
+        let currentTrackData = tracks[0];
+        const TOTAL_LAPS = 5;
+        let gameActive = false;
+        let countdownState = 3;
+        let countdownTimer = null;
+        
+        let keys = { left: false, right: false, gas: false, reverse: false, turbo: false };
+        let playerKart = null;
+        let opponentKarts = [];
+        let trackObstacles = [];
+        let particles = [];
+        let skidMarks = [];
+        let screenShakeFrames = 0;
+        let screenShakeIntensity = 0;
+
+        function setKey(key, val) {
+            initAudio();
+            keys[key] = val;
+        }
+
+        window.addEventListener('keydown', (e) => {
+            initAudio();
+            if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+            if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+            if (e.key === 'ArrowUp' || e.key === 'w') keys.gas = true;
+            if (e.key === 'ArrowDown' || e.key === 's') keys.reverse = true;
+            if (e.key === ' ') keys.turbo = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+            if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+            if (e.key === 'ArrowUp' || e.key === 'w') keys.gas = false;
+            if (e.key === 'ArrowDown' || e.key === 's') keys.reverse = false;
+            if (e.key === ' ') keys.turbo = false;
+        });
+
+        function triggerScreenShake(frames, intensity) {
+            screenShakeFrames = frames;
+            screenShakeIntensity = intensity;
+        }
+
+        function initGame() {
+            initAudio();
+            currentTrackData = tracks[selectedTrackIndex];
+            const activePath = currentTrackData.path;
+
+            document.getElementById('trackScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('currentEntityName').innerText = entitiesList[selectedIndex].name;
+
+            let availableIndices = [];
+            for (let i = 0; i < entitiesList.length; i++) if (i !== selectedIndex) availableIndices.push(i);
+            availableIndices.sort(() => Math.random() - 0.5);
+            let opponentIndices = availableIndices.slice(0, 4);
+
+            playerKart = {
+                isPlayer: true,
+                name: entitiesList[selectedIndex].name,
+                imgIdx: selectedIndex,
+                x: activePath[0].x - 15,
+                y: activePath[0].y + 120,
+                angle: -Math.PI / 2,
+                speed: 0,
+                maxSpeed: 5.5,
+                checkpoint: 0,
+                lap: 0,
+                hitCooldown: 0,
+                passedHalf: false
+            };
+
+            opponentKarts = [];
+            opponentIndices.forEach((opIdx, i) => {
+                opponentKarts.push({
+                    isPlayer: false,
+                    name: entitiesList[opIdx].name,
+                    imgIdx: opIdx,
+                    x: activePath[0].x + 15 + (i * 12),
+                    y: activePath[0].y + 160 + (i * 30),
+                    angle: -Math.PI / 2,
+                    speed: (3.6 + selectedTrackIndex * 0.3) + Math.random() * 0.5,
+                    maxSpeed: (4.2 + selectedTrackIndex * 0.3) + Math.random() * 0.4,
+                    checkpoint: 0,
+                    lap: 0,
+                    hitCooldown: 0,
+                    passedHalf: false
+                });
+            });
+
+            trackObstacles = selectedTrackIndex === 2 ? [
+                { x: 750, y: 700, type: 'rock', icon: '🪨' },
+                { x: 375, y: 250, type: 'log', icon: '🪵' },
+                { x: 150, y: 850, type: 'ramp', icon: '🚀' },
+                { x: 450, y: 1100, type: 'rock', icon: '🪨' }
+            ] : [];
+
+            particles = [];
+            skidMarks = [];
+            gameActive = true;
+            countdownState = 3;
+
+            if (countdownTimer) clearInterval(countdownTimer);
+
+            playSound('beep');
+            countdownTimer = setInterval(() => {
+                if (countdownState === 3) {
+                    countdownState = 2;
+                    playSound('beep');
+                } else if (countdownState === 2) {
+                    countdownState = 1;
+                    playSound('beep');
+                } else if (countdownState === 1) {
+                    countdownState = 'GO!';
+                    playSound('go');
+                    startBgMusic();
+                    clearInterval(countdownTimer);
+                    setTimeout(() => { 
+                        countdownState = 'RUNNING'; 
+                        startBgMusic();
+                    }, 900);
+                }
+            }, 1000);
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function isKartOnTrack(x, y) {
+            let path = currentTrackData.path;
+            let minDist = Infinity;
+            for (let i = 0; i < path.length; i++) {
+                let p1 = path[i];
+                let p2 = path[(i + 1) % path.length];
+                
+                let l2 = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+                if (l2 === 0) continue;
+                let t = ((x - p1.x) * (p2.x - p1.x) + (y - p1.y) * (p2.y - p1.y)) / (l2 * l2);
+                t = Math.max(0, Math.min(1, t));
+                let projX = p1.x + t * (p2.x - p1.x);
+                let projY = p1.y + t * (p2.y - p1.y);
+                let dist = Math.hypot(x - projX, y - projY);
+
+                if (dist < minDist) minDist = dist;
+            }
+            let trackWidthLimit = selectedTrackIndex === 2 ? 90 : (selectedTrackIndex === 0 ? 85 : 70);
+            return minDist < trackWidthLimit;
+        }
+
+        function updateGame() {
+            if (countdownState !== 'RUNNING') return;
+
+            const activePath = currentTrackData.path;
+            const totalCp = activePath.length;
+            const halfCp = Math.floor(totalCp / 2);
+
+            if (playerKart.hitCooldown > 0) playerKart.hitCooldown--;
+
+            if (Math.abs(playerKart.speed) > 0.1) {
+                let turnDir = playerKart.speed > 0 ? 1 : -1;
+                if (keys.left) {
+                    playerKart.angle -= 0.05 * turnDir;
+                    addSkidMark(playerKart.x, playerKart.y);
+                }
+                if (keys.right) {
+                    playerKart.angle += 0.05 * turnDir;
+                    addSkidMark(playerKart.x, playerKart.y);
+                }
+            }
+
+            let onAsphalt = isKartOnTrack(playerKart.x, playerKart.y);
+            let speedMultiplier = onAsphalt ? 1.0 : 0.75;
+
+            let targetMaxSpeed = playerKart.maxSpeed * speedMultiplier;
+            if (keys.turbo && onAsphalt) {
+                targetMaxSpeed *= 1.4;
+                playSound('boost');
+                addParticles(playerKart.x, playerKart.y, '#f59e0b', 4);
+            }
+            if (playerKart.hitCooldown > 20) targetMaxSpeed *= 0.4;
+
+            if (keys.gas) {
+                playerKart.speed += 0.18;
+                if (Math.random() < 0.4) addParticles(playerKart.x, playerKart.y, '#9ca3af', 1);
+            } else if (keys.reverse) {
+                playerKart.speed -= 0.22;
+            } else {
+                playerKart.speed *= 0.94;
+            }
+
+            playerKart.speed = Math.max(-2.5, Math.min(playerKart.speed, targetMaxSpeed));
+
+            playerKart.x += Math.cos(playerKart.angle) * playerKart.speed;
+            playerKart.y += Math.sin(playerKart.angle) * playerKart.speed;
+
+            // IA dos Oponentes
+            opponentKarts.forEach(op => {
+                if (op.hitCooldown > 0) op.hitCooldown--;
+
+                let target = activePath[(op.checkpoint + 1) % totalCp];
+                let dx = target.x - op.x;
+                let dy = target.y - op.y;
+
+                let targetAngle = Math.atan2(dy, dx);
+                let diff = targetAngle - op.angle;
+                while (diff < -Math.PI) diff += Math.PI * 2;
+                while (diff > Math.PI) diff -= Math.PI * 2;
+                op.angle += diff * 0.08;
+
+                op.speed = op.maxSpeed;
+                op.x += Math.cos(op.angle) * op.speed;
+                op.y += Math.sin(op.angle) * op.speed;
+            });
+
+            // Colisões entre karts com som seco (SEM tremor de tela para evitar mal-estar)
+            let allKarts = [playerKart, ...opponentKarts];
+            for (let i = 0; i < allKarts.length; i++) {
+                for (let j = i + 1; j < allKarts.length; j++) {
+                    let k1 = allKarts[i];
+                    let k2 = allKarts[j];
+                    let dist = Math.hypot(k1.x - k2.x, k1.y - k2.y);
+                    if (dist < 26) {
+                        playSound('hit');
+                        addParticles((k1.x + k2.x) / 2, (k1.y + k2.y) / 2, '#fbbf24', 3);
+                        let angle = Math.atan2(k2.y - k1.y, k2.x - k1.x);
+                        k1.x -= Math.cos(angle) * 8;
+                        k1.y -= Math.sin(angle) * 8;
+                        k2.x += Math.cos(angle) * 8;
+                        k2.y += Math.sin(angle) * 8;
+                    }
+                }
+            }
+
+            // CONTROLE DE VOLTAS E CHECKPOINTS EXATO
+            allKarts.forEach(kart => {
+                let nextCpIndex = (kart.checkpoint + 1) % totalCp;
+                let target = activePath[nextCpIndex];
+                let distToTarget = Math.hypot(kart.x - target.x, kart.y - target.y);
+
+                if (distToTarget < 140) {
+                    kart.checkpoint = nextCpIndex;
+                    if (kart.checkpoint === halfCp) {
+                        kart.passedHalf = true;
+                    }
+                    if (kart.checkpoint === 0 && kart.passedHalf) {
+                        kart.lap++;
+                        kart.passedHalf = false;
+                        if (kart.isPlayer) playSound('lap');
+
+                        if (kart.lap === TOTAL_LAPS) {
+                            endRace(kart);
+                            return;
+                        }
+                    }
+                }
+            });
+
+            if (!gameActive) return;
+
+            // Obstáculos Hard (com micro tremor bem sutil apenas em impacto forte)
+            if (selectedTrackIndex === 2 && playerKart.hitCooldown === 0) {
+                trackObstacles.forEach(obs => {
+                    let d = Math.hypot(playerKart.x - obs.x, playerKart.y - obs.y);
+                    if (d < 30) {
+                        if (obs.type === 'rock' || obs.type === 'log') {
+                            playSound('hit');
+                            triggerScreenShake(4, 1); // Super leve e rápido
+                            addParticles(obs.x, obs.y, '#9ca3af', 4);
+                            playerKart.speed = 0.5;
+                            playerKart.hitCooldown = 35;
+                        } else if (obs.type === 'ramp') {
+                            playSound('boost');
+                            addParticles(obs.x, obs.y, '#10b981', 6);
+                            playerKart.speed = 8.5;
+                            playerKart.hitCooldown = 15;
+                        }
+                    }
+                });
+            }
+
+            updateParticles();
+        }
+
+        function addParticles(x, y, color, count) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x + (Math.random() - 0.5) * 10,
+                    y: y + (Math.random() - 0.5) * 10,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    alpha: 1.0,
+                    color: color,
+                    size: Math.random() * 3 + 2
+                });
+            }
+        }
+
+        function addSkidMark(x, y) {
+            if (skidMarks.length > 50) skidMarks.shift();
+            skidMarks.push({ x: x, y: y, alpha: 0.3 });
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.03;
+                if (p.alpha <= 0) particles.splice(i, 1);
+            }
+        }
+
+        function getKartScore(kart) {
+            const activePath = currentTrackData.path;
+            let totalCp = activePath.length;
+            let nextCpIndex = (kart.checkpoint + 1) % totalCp;
+            let target = activePath[nextCpIndex];
+            let distToTarget = Math.hypot(kart.x - target.x, kart.y - target.y);
+            return (kart.lap * 1000000) + (kart.checkpoint * 10000) - distToTarget;
+        }
+
+        function endRace(winnerKart) {
+            if (!gameActive) return;
+            gameActive = false;
+            stopBgMusic();
+            playSound('win');
+
+            let allKarts = [playerKart, ...opponentKarts];
+            allKarts.sort((a, b) => getKartScore(b) - getKartScore(a));
+
+            let rank = allKarts.findIndex(k => k.isPlayer) + 1;
+
+            let podiumHTML = `A corrida terminou!<br><br>`;
+            podiumHTML += `🏅 <strong>Resultado Final:</strong><br>`;
+            allKarts.forEach((k, idx) => {
+                podiumHTML += `${idx + 1}º Lugar: ${k.name} ${k.isPlayer ? '(Você) 🏎️' : ''} - Volta ${Math.min(TOTAL_LAPS, k.lap)}/5<br>`;
+            });
+
+            document.getElementById('podiumTitle').innerText = rank === 1 ? "Campeão do Terreiro! 🏆" : "Fim de Corrida! 🏁";
+            document.getElementById('podiumText').innerHTML = podiumHTML;
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+        }
+
+        function drawScreen() {
+            const activePath = currentTrackData.path;
+
+            ctx.save();
+
+            let offsetX = 0;
+            let offsetY = 0;
+            if (screenShakeFrames > 0) {
+                screenShakeFrames--;
+                offsetX = (Math.random() - 0.5) * screenShakeIntensity * 2;
+                offsetY = (Math.random() - 0.5) * screenShakeIntensity * 2;
+            }
+
+            ctx.translate(canvas.width / 2 - playerKart.x + offsetX, canvas.height / 2 - playerKart.y + offsetY);
+
+            ctx.fillStyle = selectedTrackIndex === 0 ? '#65a30d' : (selectedTrackIndex === 1 ? '#15803d' : '#4c1d95');
+            ctx.fillRect(-500, -500, 2500, 2500);
+
+            // Marcas de Pneu no Asfalto e na Grama
+            skidMarks.forEach(sm => {
+                ctx.fillStyle = `rgba(31, 41, 55, ${sm.alpha})`;
+                ctx.fillRect(sm.x - 2, sm.y - 2, 4, 4);
+            });
+
+            // Desenhar Pista
+            ctx.beginPath();
+            ctx.moveTo(activePath[0].x, activePath[0].y);
+            for (let i = 1; i < activePath.length; i++) {
+                ctx.lineTo(activePath[i].x, activePath[i].y);
+            }
+            ctx.closePath();
+
+            let trackWidth = selectedTrackIndex === 2 ? 150 : (selectedTrackIndex === 0 ? 140 : 110);
+
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = trackWidth;
+            ctx.stroke();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = trackWidth - 10;
+            ctx.setLineDash([20, 20]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.strokeStyle = '#1f2937';
+            ctx.lineWidth = trackWidth - 25;
+            ctx.stroke();
+
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([15, 15]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Linha de Chegada Quadriculada
+            let p0 = activePath[0];
+            ctx.save();
+            ctx.translate(p0.x, p0.y);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(-80, -15, 160, 30);
+            ctx.fillStyle = '#000000';
+            for (let r = -80; r < 80; r += 16) {
+                for (let c = -15; c < 15; c += 15) {
+                    if ((r + c) % 32 === 0) ctx.fillRect(r, c, 16, 15);
+                }
+            }
+            ctx.restore();
+
+            if (selectedTrackIndex === 2) {
+                trackObstacles.forEach(obs => {
+                    ctx.font = '28px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(obs.icon, obs.x, obs.y);
+                });
+            }
+
+            // Desenhar Partículas
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.alpha;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            });
+
+            // Desenhar Karts ordenados por profundidade Y
+            let allKartsToDraw = [playerKart, ...opponentKarts];
+            allKartsToDraw.sort((a, b) => a.y - b.y);
+
+            allKartsToDraw.forEach(k => {
+                drawKartSprite(k.x, k.y, k.angle, k.imgIdx, k.isPlayer, k.name);
+            });
+
+            ctx.restore();
+
+            // Desenhar Contagem Regressiva na Tela do Jogo
+            if (countdownState !== 'RUNNING') {
+                ctx.save();
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = countdownState === 'GO!' ? '#10b981' : '#d4af37';
+                ctx.font = 'bold 3.5rem sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = '#000';
+                ctx.shadowBlur = 10;
+                ctx.fillText(countdownState, canvas.width / 2, canvas.height / 2);
+                ctx.restore();
+            }
+        }
+
+        function drawKartSprite(x, y, angle, imgIdx, isPlayer, name) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle + Math.PI / 2);
+
+            if (isPlayer) {
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.moveTo(0, -28);
+                ctx.lineTo(-8, -18);
+                ctx.lineTo(8, -18);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            ctx.beginPath();
+            ctx.arc(0, 2, 14, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(0, 0, 13, 0, Math.PI * 2);
+            ctx.clip();
+
+            const img = loadedImages[imgIdx];
+            if (img && img.complete) {
+                ctx.drawImage(img, -13, -13, 26, 26);
+            } else {
+                ctx.fillStyle = isPlayer ? '#10b981' : '#ef4444';
+                ctx.fill();
+            }
+            ctx.restore();
+
+            ctx.strokeStyle = isPlayer ? '#d4af37' : '#ef4444';
+            ctx.lineWidth = isPlayer ? 2.5 : 1.5;
+            ctx.beginPath();
+            ctx.arc(x, y, 13, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = isPlayer ? '#d4af37' : '#fff';
+            ctx.font = 'bold 9px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(name, x, y - 18);
+        }
+
+        function updateHUD() {
+            let allKarts = [playerKart, ...opponentKarts];
+            allKarts.sort((a, b) => getKartScore(b) - getKartScore(a));
+            let rank = allKarts.findIndex(k => k.isPlayer) + 1;
+
+            document.getElementById('lapText').innerText = `${Math.min(TOTAL_LAPS, playerKart.lap)}/${TOTAL_LAPS}`;
+            document.getElementById('posText').innerText = `${rank}º / 5`;
+        }
+
+        function gameLoop() {
+            if (!gameActive) return;
+            updateGame();
+            drawScreen();
+            updateHUD();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function resetToMenu() {
+            stopBgMusic();
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('trackScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderEntityGrid();
+            preloadImages();
+        });
+        
+        setTimeout(() => {
+            renderEntityGrid();
+            preloadImages();
+        }, 50);
+    </script>
+</body>
+</html>
